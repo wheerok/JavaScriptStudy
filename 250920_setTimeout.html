@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>setTimeout</title>
+    <link rel="stylesheet" href="main.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="alert alert-danger">
+        5초 이내 구매시 사은품 증정!
+    </div>
+    
+    <script>
+        setTimeout(function(){
+            $('.alert').hide();
+        }, 1000)
+        // n초 후 코드를 실행하려면 setTimeout(function(){실행할 코드},ms)
+
+        setInterval(function(){
+            console.log('hello');
+        }, 1000) //1초마다 실행
+
+        setTimeout(함수, 2000)
+
+        function 함수(){
+            console.log('하이');
+        }
+    </script>
+</body>
+</html>

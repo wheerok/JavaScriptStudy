@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>setTimeout</title>
+    <link rel="stylesheet" href="main.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="alert alert-danger">
+        <span class="seconds">5</span>초 이내 구매시 사은품 증정!
+    </div>
+
+    <script>
+        var seconds = Number($('.seconds').text());
+
+        // setInterval(function(){
+        //     seconds -= 1
+        //     if(seconds >= 0){
+        //         $('.seconds').text(seconds);
+        //     } else{
+
+        //     }
+        // }, 1000);
+
+        let timer = setInterval(timeEvent, 1000);
+
+        function timeEvent(){
+            seconds -= 1
+            if(seconds >= 0){
+                $('.seconds').text(seconds);
+            } else if(seconds <= 0){
+                clearInterval(timer);
+                $('.alert').hide();
+            }
+        }
+
+        // 함수를 먼저 만들고, 그게 실행되는 것을 setInterval에 담아서 원하는 시간 내마다 작동하게 만들고
+        // 그것을 변수에 넣어둔다. 왜냐하면 그걸 중단할 때 clearInterval을 사용하는데 이때 안에 setInterval이
+        // 담긴 변수를 넣어서 조건에 맞을 때 setInterval을 멈춰주는 방법이었음.$
+
+        // setInterval(콜백함수, 시간) 는
+        // "시간(ms)"을 간격으로 "콜백함수"를 반복 호출 하는 함수이다.
+
+        // return 값으로 고유하게 interval을 식별하는 interval ID를 갖기 때문에
+        // 나중에 clearInterval() 로 고유 interval ID를 제거해서 반복 호출을 중단시킬 수 있다.
+
+        // setInterval 함수의 반환값을 변수에 할당해두고,
+        // clearInterval(변수)를 호출하여 반복을 중단 ! 
+
+        //  setInterval 중단/재시작 방법
+        // setInterval()함수의 반환값을 변수에 할당하여 반복 시작
+        // let 변수 = setInterval(콜백함수, 시간);
+
+        // clearInterval(변수)로 반복 중단
+        // clearInterval(변수);
+
+        // setInterval()함수의 반환값을 변수에 재할당하여 재시작
+        // 변수 = setInterval(콜백함수, 시간);
+    </script>
+</body>
+</html>

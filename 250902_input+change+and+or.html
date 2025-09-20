@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+<body>
+     <div class="black-bg">
+        <div class="white-bg">
+            <h4>로그인하세요</h4>
+
+            <form action="success.html" id="loginForm"> <!--서버로 -->
+                <div class="my-3">
+                    <input type="text" class="form-control" id="email">
+                </div>
+                <div class="my-3">
+                    <input type="password" class="form-control" id="password">
+                </div>
+                <button type="submit" class="btn btn-primary" id="send">전송</button>
+                <button type="button" class="btn btn-danger" id="close">닫기</button>
+                </form> 
+        </div>
+    </div> 
+
+    <div class="main-bg">
+        <h4>Shirts on Sale</h4>
+        <button id="login" class="btn btn-danger">로그인</button>
+    </div>
+
+     <script>
+        if (1 == 3){
+            console.log('맞아요1');
+        } else if(3 == 3){
+            console.log('맞아요2');
+        }
+         // 앞의 조건식이  참이면 else문 뒤에는 실행 X
+
+        $('#login').on('click', function(){
+            $('.black-bg').fadeIn();
+        });
+        $('#close').on('click', function(){
+            $('.black-bg').fadeOut();
+        });
+
+
+        //전송버튼 누르면, 인풋에 입력한 값이 공백이면 알림창 띄우기
+        /*document.getElementById('loginForm').addEventListener('submit', function(e){
+            if ( document.querySelectorAll("input")[0].value == ""){
+                e.preventDefault();
+                //참이면 실행할 코드
+                alert('이메일을 입력해주세요.');
+            } else{
+                //참이 아니면 실행할 코드
+                alert('환영합니다!');
+            }
+        });*/
+
+        /*$('form').on('submit', function(e){
+            if($('form #email').val() == ""){
+                e.preventDefault();
+                alert('이메일을 입력하세요!');
+            } else {
+                alert('환영합니다!');
+            }
+        });*/
+        
+        //숙제1. 전송 누르면 아이디,비번 입력란 모두 공백 검사
+        //숙세2. 비번 6자 미만이면 더 길게 입력하라고 안내문 띄우기
+        $('form').on('submit', function(e){
+            if(document.getElementById('email').value == ""){
+                e.preventDefault();
+                alert('이메일을 입력하세요!');   
+            } else if(document.getElementById('password').value == ""){
+                e.preventDefault();
+                alert('비밀번호를 입력하세요!');
+            } else if(document.getElementById('password').value.length < 6){
+                e.preventDefault();
+                alert('비밀번호를 6자 이상 입력하세요!');
+            } else {
+                alert('환영합니다!');
+            }
+        });
+
+        document.getElementById('email').addEventListener('change', function(){
+            //document.getElementById('email') 여기에 유저가 입력한 값이 변할 때마다 실행 (계속 검사)
+            //change도 있음 -> 유저가 값을 입력 후 포커스를 잃을 때 실행 
+            console.log('값이 입력되었어~');
+        });
+
+        
+        /*
+            조건의 타입
+            true/false = boolean 타입
+            '123' = 문자 타입 등
+
+            연산자
+            다름을 비교하고 싶으면 !=
+            엄격한 비교 ===. 느슨한 비교 ==
+            -> ex1) 1 == '1' 타입이 다르지만 같다고 봄 (true)
+            -> ex2) 1 === '1' 타입까지 같은지 봄 (false)
+
+            조건을 2개 이상 동시에 비교하고 싶다면? &&, ||연산자
+            && = AND (둘 다 참일 때 참)
+            || = OR (둘 중 하나만 참일 때 참)
+            ** 특히 여러 가지를 나열 시 소괄호를 치면 해당 부분만 먼저 연산
+            -> if ((1 == 1 && 2 == 2) && 3 == 3)
+            
+            *true로 인식하는 자료들 (truthy)
+            1. 0제외 숫자
+            2. '문자'
+            3. []
+            4. {}
+
+            *false로 인식하는 자료들 (falsy)
+            1. 0
+            2. ''
+            3. null
+            4. undefind
+            5. NaN
+        */
+
+    </script>
+
+</body>
+</html>

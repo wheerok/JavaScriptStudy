@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>carousel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+<body>
+     <div class="black-bg">
+        <div class="white-bg">
+            <h4>로그인하세요</h4>
+
+            <form action="success.html" id="loginForm"> <!--서버로 -->
+                <div class="my-3">
+                    <input type="text" class="form-control" id="email">
+                </div>
+                <div class="my-3">
+                    <input type="password" class="form-control" id="password">
+                </div>
+                <button type="submit" class="btn btn-primary" id="send">전송</button>
+                <button type="button" class="btn btn-danger" id="close">닫기</button>
+                </form> 
+        </div>
+    </div> 
+
+    <div class="main-bg">
+        <h4>Shirts on Sale</h4>
+        <button id="login" class="btn btn-danger">로그인</button>
+    </div>
+
+    <div class="slide-container">
+        <div class="slide-wrap">
+            <div class="slide-box">
+                <img src="images/car1-1.png" alt="">
+            </div>
+            <div class="slide-box">
+                <img src="images/car2-1.png" alt="">
+            </div>
+            <div class="slide-box">
+                <img src="images/car3-1.png" alt="">
+            </div>
+        </div>
+        
+        <div class="slide-nav">
+            <button class="prev">이전</button>
+            <button class="next">다음</button>
+        </div>
+
+        <div class="slide-btn">
+            <button class="btn01">1</button>
+            <button class="btn02">2</button>
+            <button class="btn03">3</button>
+        </div>
+        
+    </div>
+
+    <script>
+
+        document.querySelector('.btn01').addEventListener('click', function(){
+            document.querySelector('.slide-wrap').style.transform='translateX(0vw)'
+        });
+
+        document.querySelector('.btn02').addEventListener('click', function(){
+            document.querySelector('.slide-wrap').style.transform='translateX(-100vw)'
+        });
+
+        document.querySelector('.btn03').addEventListener('click', function(){
+            document.querySelector('.slide-wrap').style.transform='translateX(-200vw)'
+        });
+
+        let currentIndex = 0;
+        // 핵심) 현재 몇 번째 슬라이드인지 기억하는 함수임
+        // 다음 버튼을 누르면 currentIndex++
+        // 이전 버튼을 누르면 currentIndex--
+        // 버튼별로 직접 translateX를 쓰느 것이 아니라 인덱스를 계산하는 것
+
+        /*
+            무한 슬라이딩의 방법은 크게 두 가지가 있음
+
+            (1) 인덱스 리셋 방식
+            currentIndex가 마지막에서 "다음"을 누르면 (인덱스 값은 2겠지)
+            currentIndex = 0으로 되돌려주기
+
+            이전 버튼도 마찬가지로 currentIndex = 0에서 이전을 누르면
+            currentIndex = 마지막 (현재는 2)으로 설정되어야 함
+
+            (2) 클론 슬라이드 방식 (많이 씀)
+            첫 슬라이드를 마지막 뒤에 복제, 마지막 슬라이드를 처음 앞에 복제
+            예시 : [cloneLast, 1, 2, 3, cloneFirst]
+
+            이렇게 하면 3에서 cloneFirst로 자연스럽게 넘어가고
+            애니메이션이 끝난 시점에 순간적으로 translateX를 1번 위치로 점프
+
+            무한 캐러셀에 많이 쓰임(Swiper.js도 이런 방식임)
+        */
+        
+
+        /*
+            그렇다면? 내 생각엔 아예 버튼을 클릭 할 때마다
+            슬라이드의 인덱스 값을 가져오면 좋을 거 같음... 그러면 반복문 공부가 필요하다!
+
+            1. 반목문이란?
+            - 코드를 여러 번 반복 실행하는 문법
+            [그 중에 하나가 forEach]
+
+            const arr = ['사과', '바나나', '포도']
+            arr.forEach((item, index) = > {
+                console.log(index, item);
+            });
+            (=> : 자바스크립트의 화살표 함수 문법 / (매개변수) => { 실행할 코드 })
+            
+            출력 👉 0 '사과' 1 '바나나' 2 '포도'
+
+            즉 forEach는 배열의 각 요소와 그것의 순서(index)를 자동으로 줌
+
+            2. 슬라이드 버튼에 반복문 적용
+            
+            (1)HTML 버튼들을 한 번에 선택
+            const slideButtons = document.querySelectorAll('slide-btn button');
+
+            (2) 이걸 반복문으로 돌리기
+            slideButtons.forEach((btn, index) => {
+                btn.addEventListener('click', () => {
+                    goToSlide(index); 누른 버튼 순서(index)를 그대로 넘겨줌
+                });
+            });
+            이제 버튼 몇 개를 만들어도 자동으로 index가 정해지고 그걸 goToSlide()로 보낼 수 있음
+
+            (3) 이전/다음 버튼 구현
+            const prevBtn = document.querySelector('.prev');
+            const nextBtn = document.querySelector('.next');
+
+            let currentIndex = 0;
+            const totalSlides = slideButtons.length; 버튼개수 = 슬라이드 개수
+
+            function goToSlide(index){
+                currentIndex = index;
+                document.querySelector('.slide-wrap').style.transform = `translateX(-${100 * currentIndex}vw)`;
+            }
+
+            // 이전 버튼
+            prevBtn.addEventListener('click', () => {
+            let newIndex = currentIndex - 1;
+            if (newIndex < 0) {
+                newIndex = totalSlides - 1; // 0에서 더 줄면 마지막으로
+            }
+                goToSlide(newIndex);
+            });
+
+            이전 버튼에 클릭 이벤트 생성 뉴 인덱스는 현재 인덱스 - 1
+            만약 뉴인덱스가 0보다 작다면 뉴인덱스의 토탈 슬라이드 - 1; 
+            
+            🔅 totalSlides는 버튼의 개수에서 옴 (3)
+            🔅 거기서 -1을 하면 2... 즉 인덱스의 마지막 값이 되는 거임 (인덱스는 0부터 시작되니까!)
+            🔅 그 값이 2를 newIndex에 할당하고 goToSlide(newIndex);로 적용되면 goToSlide함 수에서 처리가 되기에... 인덱스 2로 들어가고 -200vw가 되는 거임
+        
+
+            // 다음 버튼
+            nextBtn.addEventListener('click', () => {
+            let newIndex = currentIndex + 1;
+            if (newIndex >= totalSlides) {
+                newIndex = 0; // 마지막에서 더 가면 처음으로
+            }
+            goToSlide(newIndex);
+            });
+        */
+
+    </script>
+    
+     <script>
+        if (1 == 3){
+            console.log('맞아요1');
+        } else if(3 == 3){
+            console.log('맞아요2');
+        }
+         // 앞의 조건식이  참이면 else문 뒤에는 실행 X
+
+        $('#login').on('click', function(){
+            $('.black-bg').fadeIn();
+        });
+        $('#close').on('click', function(){
+            $('.black-bg').fadeOut();
+        });
+        
+
+        $('form').on('submit', function(e){
+            var userInputId = document.getElementById('email').value;
+            var userIputPsw = document.getElementById('password').value;
+            //form 검증 시에는 return으로 끊어주는 방식이 깔끔함
+
+            //이메일 입력 여부 검사
+            if(userInputId == ""){
+                e.preventDefault();
+                alert('이메일을 입력하세요!');
+                return; 
+            }
+            
+            //이메일 형식 검사
+            if(!/\S+@\S+\.\S+/.test(userInputId)){
+                e.preventDefault();
+                alert('이메일 형식인지 확인해주세요!');
+                return;
+            }
+            //비밀번호 입력 여부 검사
+            if(userIputPsw == ""){
+                e.preventDefault();
+                alert('비밀번호를 입력하세요!');
+                return;
+            }
+
+            //비밀번호 영어 대문자 입력 여부 검사
+            if(!/[A-Z]/.test(userIputPsw)){
+                // !를 붙이면 not 즉, 이 정규식이 아니라면
+                e.preventDefault();
+                alert('비밀번호에 영어 대문자를 1개 이상 입력하세요!')
+                return;
+            }
+
+            /*
+                일반적으로 요즘엔 보안 때문에 대문자 + 특문 + 숫자가 모두 들어가야 하는데 이럴 경우엔
+                !/[A-Z]/.test(...) && !/[!@_]/,test(...) && !/[0-9]/.test(...)
+                -> 이렇게 조건이 붙어야 할 듯
+
+                근데 너무 기니까... 
+                정규식의 lookahead 기능을 쓰면 한 줄로 검사가 가능함
+                !/^(?=.*[A-Z])(?=.*[!@_])(?=.*[0-9])/.test(...)
+                -> 다 만족해야만 함
+
+                (?=.*[A-Z]) : 문자열 어딘가에 영어 대문자가 최소 1개 존재
+                (?=.*[!@_]) : 문자열 어딘가에 특수문자 !,@,_ 중 최소 하나가 1개 존재
+                ^... : 문자열의 처음부터 검사 시작
+
+                ?=.* 은 긍정형 전방탐색(positive lookahead)이라는 기능임
+                (?= ... ) : 이 안의 조건이 [앞으로 이어지는 문자열 어딘가에 반드시] 있어야 한다
+                . : 아무글자 하나
+                * : 0개 이상 반복
+
+                /^(?=.*[A-Z])/.test('Hello') 
+                이건 lookahead → “앞으로 가면서 대문자가 하나라도 있는지 확인”
+                하지만 확인만 할 뿐, 실제 문자를 매칭하지는 않음 → 즉, 소모하지 않는다
+                ->"Hello" 안에서 대문자 H를 “있네” 하고 체크만 하고, H를 잡아먹지 않고 그대로 둠
+
+                BUT
+
+                [A-Z]
+                이건 대문자 하나를 실제로 매칭함
+                -> "Hello"에서 매칭하면 H를 실제로 잡아먹고, 다음 검사 위치는 e부터 시작
+
+                /^(?=.*[A-Z])(?=.*[!@_])(?=.*[0-9])/ 도 정상적으로 작동하지만
+                문자열 전체가 규칙에 맞는지 보장하려면  .+$가 붙어야 함
+
+                따라서 문자열 전체가 규칙에 맞는지를 보장하려면 마지막에 .+$ 같은 실제 매칭 패턴이 필요함
+                /^(?=.*[A-Z])(?=.*[!@_])(?=.*[0-9]){6,}.+$/
+
+                즉, lookahead (?=...) → 조건 확인만 하고, 글자를 소비하지 않음
+                보통 패턴([A-Z], .+ 등) → 글자를 실제로 매칭하면서 소비함
+
+                그래서 내가 이해한 것은 더 공고화(확실하게) 하려는 목적...
+
+                조건 + 실제 문자열이 최소 1글자 이상 있는 것까지 보장.
+                -> “비밀번호” 같은 보안 조건을 검증할 땐 보통 .+$ 또는 .{8,}$ 같은 최소 길이 제약을 붙여서 더 안전하게 쓸 수 있음
+
+
+                반약 2개 이상~ 포함되어야 한다면
+                /^(?=(?:.*[!@_]){n,})/
+                -> 정규식에서 {} 는 “반복 횟수”를 지정하는 수량자(quantifier)
+
+                {n} → 정확히 n번 반복
+                {n,m} → 최소 n번, 최대 m번 반복
+                {n,} → 최소 n번 이상 (최대는 제한 없음)
+
+                여기서 쓰인 {2,}은? 최소 2번 이상 반복을 뜻함 뒤에 최대값이 비어 있으니까 “2 이상은 얼마든지”라는 의미
+
+                대문자가 최소 1개 이상, 특수문자가가 !@_ 중 최소 1개 이상, 숫자는 6개가 조건이라면
+                /^(?=.*[A-Z])(?=.*[!@_])(?=(?:.*[0-9]){6,}).+$/
+
+                . : 아무글자 하나
+                * : 0개 이상 반복
+
+                (?=(?:.*[0-9]){6,}) 해석하기
+
+                [0-9]
+                👉 0부터 9까지 숫자 1개
+
+                .*[0-9]
+                👉 “아무 글자(.*) 뒤에 숫자 1개” → 즉, 숫자 하나 찾기
+
+                (?: ... ){6,}
+                👉 괄호 안 내용을 6번 이상 반복
+                → 즉, “숫자 하나 찾기”를 6번 이상 반복해야 함
+                → 숫자가 6개 이상 있어야 한다
+
+                (?= ... )
+                👉 “앞으로 보니까 이런 조건이 있어야 해!” → 조건만 확인, 실제로 글자를 가져가진 않음 (개수만 확인하면 되니까)
+            */
+            
+            //비밀번호 자릿수 검사
+            if(userIputPsw.length < 6){
+                e.preventDefault();
+                alert('비밀번호를 6자 이상 입력하세요!');
+                return;
+            }
+            
+            alert('환영합니다!');
+           
+        });
+
+        document.getElementById('email').addEventListener('change', function(){
+            //document.getElementById('email') 여기에 유저가 입력한 값이 변할 때마다 실행 (계속 검사)
+            //change도 있음 -> 유저가 값을 입력 후 포커스를 잃을 때 실행 
+            console.log('값이 입력되었어~');
+        });
+
+        
+        /*
+            문자를 검사하는 가장 쉬운 방법
+            '문자'.includes('찾을 단어')
+            -> 아무 문자 뒤에 .includes()를 붙일 수 있음
+            -> 그러면 찾을 단어가 들어있늕디 검사하고 true, false 반환
+            ⛔️ 하지만 한글이냐, 영어냐, A로 끝나냐 마침표 다음에 영어가 있냐 등은 검사가 어려움
+            ==================================================================
+
+            그래서 사용하는 것이 '정규표현식(regular expression)'
+            정규식 표현법은? /abc/이게 끝임 그럼 물어볼 준비 완료!
+
+            abcdef라는 문자에 abc라는 단어가 있는지 검사하는 방법
+            /abc/.test('abcdef')
+
+            ❇️ /정규식/.test(정규식으로 검사할 문자)
+            -> 그러면 검사하고 true, false 반환
+
+            ==================================================================
+            
+            🔆정규식 문법 배워보기
+
+            (1)
+            /a/.test('abcdef') -> true
+            영어나 한글의 경우 그냥 쓰면 글자가 유무를 물어볼 수 있음
+
+            (2)
+            /[a-b]/.test('aefg') // true
+             /[가-다].test('다라마바') //true
+            []기호를 이용해서 문자 범위 지정 가능함
+            즉, [a-z]는 a부터 z까지 아무 문자 하나를 의미함
+
+            (3)
+            /[a-zA-z]/.test('반가워요') //flase -> 아무 알파벳 하나
+            /[a-zA-Z]/.test('반가워요a') //true
+            /[ㄱ-ㅎ가-힣ㅏ-ㅑ]/.test('반가워요') //true -> 아무 한글 하나
+
+            (4)
+            /\S/.test('abcde') // true
+            백슬래시S는 특수문자 포함 아무 문자 1개라는 뜻
+
+
+            (5)
+            /^a/.test('abcde') //true -> a로 시작하는지 검사
+            /a$/.test('abcde') //true -> e로 끝나는지 검사
+
+            (6) /(e|f)/.text('abcde') //true
+            or로 e나 f 중 한 문자라도 있는지 검사를 함
+            정규식에서도 괄호 사용 가능
+
+            (7)/a+/
+            + 기호를 붙여주면 뒤에 오는 글자들도 a와 일치하먄 반복해서 쭉 찾아달라는 뜻
+            /a/는 a를 다 찾는 게 아니라 a 한 개를 찾으라는 뜻이기 때문임
+            aaaaa 이런 거를 찾고 싶으면 /a+/ 쓰기
+
+            ** /\S+t/ : 모든 문자 여러개 다음에 t라는 글자가 있는지 검사하라는 정규식임
+            -> aaaat bbt 이런 것을을 찾아줄 듯
+        */
+
+    </script>
+
+</body>
+</html>

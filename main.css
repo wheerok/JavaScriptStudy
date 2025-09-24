@@ -64,3 +64,33 @@ button{
   font-weight:bold;
   font-size:1.2em;
 }
+
+
+/* 캐러셀 */
+.slide-container{
+  position: relative;
+}
+.slide-wrap{
+  width:300vw;
+  transition: all 1s;
+  overflow: hidden;
+}
+.slide-box{
+  width:100vw;
+  float: left;
+}
+.slide-box > img {
+  width:100%;
+}
+
+.slide-btn{
+  position: absolute;
+  left:50%;
+  bottom:-60px;
+  transform: translateX(-50%);
+}
+.slide-btn button{
+  width:40px;
+  height:40px;
+  font-size: 12px;
+}

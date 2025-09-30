@@ -72,7 +72,53 @@
             document.querySelector('.slide-wrap').style.transform='translateX(-200vw)'
         });
 
+        const slideButtons = document.querySelectorAll('.slide-btn button');
+
+        slideButtons.forEach((btn, index) => {
+            btn.addEventListener('click', () =>{
+                goToSlide(index);
+            });
+        });
+
+        const prevBtn = document.querySelector('.prev');
+        const nextBtn = document.querySelector('.next');
+
         let currentIndex = 0;
+        const totalSlides = slideButtons.length;
+
+        function goToSlide(index){
+            currentIndex = index
+            document.querySelector('.slide-wrap').style.transform = `translateX(-${100 * currentIndex}vw)`
+        }
+        //-100 * currentIndex 만 쓰면 숫자만 계산
+        // /CSS의 transform: translateX(...)에는 **단위(vw, px 등)**까지 같이 있어야함
+        // 그래서 문자열 안에 숫자랑 단위를 합쳐줘야 함
+
+        /*
+            작은따옴표 ' '나 큰따옴표 " " → 그냥 글자만 취급, 변수 계산 안 됨
+            백틱 ` ` → 안에 ${ }를 쓰면 자바스크립트 계산 결과를 글자 안에 끼워 넣을 수 있음
+
+            👉 ${100 * currentIndex} → 숫자 계산 결과가 들어옴
+            👉 옆에 vw 글자랑 합쳐져서 "200vw" 가 됨
+        */
+
+        prevBtn.addEventListener('click', () => {
+            let newIndex = currentIndex - 1;
+            if (newIndex < 0) {
+                newIndex = totalSlides - 1;
+            }
+            goToSlide(newIndex);
+        });
+
+        nextBtn.addEventListener('click', () =>{
+            let newIndex = currentIndex + 1;
+            if (newIndex >= totalSlides) {
+                newIndex = 0;
+            }
+
+            goToSlide(newIndex);
+        });
+
         // 핵심) 현재 몇 번째 슬라이드인지 기억하는 함수임
         // 다음 버튼을 누르면 currentIndex++
         // 이전 버튼을 누르면 currentIndex--
@@ -168,6 +214,8 @@
             goToSlide(newIndex);
             });
         */
+
+
 
     </script>
     
